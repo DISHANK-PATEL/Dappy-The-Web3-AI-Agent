@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import './App.css';
 import ReactMarkdown from 'react-markdown';
 import { FaMicrophone } from 'react-icons/fa';
+import { FaUpload } from 'react-icons/fa';
 
 interface Message {
   sender: 'user' | 'bot';
@@ -85,6 +86,8 @@ function App() {
   const [threadId, setThreadId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const [listening, setListening] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Scroll to bottom on new message
   const scrollToBottom = () => {
@@ -147,6 +150,43 @@ function App() {
     recognition.start();
   };
 
+  const handleUploadIconClick = () => {
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      // Ask for confirmation before uploading
+      if (window.confirm(`Upload ${selectedFile.name} to IPFS?`)) {
+        uploadFileToIpfs(selectedFile);
+      }
+    }
+  };
+
+  const uploadFileToIpfs = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    setMessages(msgs => [...msgs, { sender: 'user', text: `Uploading file: ${file.name}` }, { sender: 'bot', text: 'Uploading to IPFS...' }]);
+    try {
+      const res = await fetch('http://localhost:3001/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      setMessages(msgs => [
+        ...msgs.slice(0, -1),
+        { sender: 'bot', text: data.url ? `File uploaded! [View on IPFS](${data.url})` : data.error }
+      ]);
+    } catch (err) {
+      setMessages(msgs => [
+        ...msgs.slice(0, -1),
+        { sender: 'bot', text: 'Error uploading to IPFS.' }
+      ]);
+    }
+  };
+
   return (
     <div className="chatbot-container">
       <h2>Onchain Agent Chatbot</h2>
@@ -196,6 +236,33 @@ function App() {
         >
           <FaMicrophone size={32} color="#fff" />
         </button>
+        <button
+          type="button"
+          className="upload-btn"
+          onClick={handleUploadIconClick}
+          style={{
+            background: 'linear-gradient(90deg, #43e7fe 0%, #a259ff 100%)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '50%',
+            width: 60,
+            height: 60,
+            marginRight: 8,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'background 0.2s',
+            boxShadow: '0 2px 12px 0 #a259ff80',
+          }}
+        >
+          <FaUpload size={30} color="#fff" />
+        </button>
+        <input
+          type="file"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
         <button type="submit" className="send-btn">Send</button>
       </form>
     </div>

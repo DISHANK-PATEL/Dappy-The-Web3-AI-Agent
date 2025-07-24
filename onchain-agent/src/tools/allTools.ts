@@ -10,6 +10,7 @@ import { uniswapV3CreatePoolTool } from './uniswapV3createPool.js';
 import { approveTokenAllowanceTool } from './approveTokenAllowance.js';
 import { getTokenBalanceTool } from './getTokenBalance.js';
 import { fetchPodcastDetailsTool } from './fetchPodcastDetails.js';
+import { uploadToIpfsTool } from './uploadToIpfs.js';
 
 export interface ToolConfig<T = any> {
     definition: {
@@ -44,6 +45,7 @@ export const tools: Record<string, ToolConfig> = {
     create_uniswap_v3_pool: uniswapV3CreatePoolTool,
     approve_token_allowance: approveTokenAllowanceTool,
     fetch_podcast_details: fetchPodcastDetailsTool,
+    upload_to_ipfs: uploadToIpfsTool,
     // generate_diagram: generateDiagramTool,
 
     // Add more tools here...

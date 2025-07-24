@@ -7,12 +7,15 @@ import { createAssistant } from './openai/createAssistant.js';
 import { createThread } from './openai/createThread.js';
 import { createRun } from './openai/createRun.js';
 import { performRun } from './openai/performRun.js';
+import multer from 'multer';
 
 const app = express();
 const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
+
+const upload = multer({ dest: 'uploads/' });
 
 app.get('/', (req, res) => {
   res.send('Onchain Agent API is running.');
@@ -71,6 +74,12 @@ app.post('/api/chat', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
+});
+
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+  const result = await tools.upload_to_ipfs.handler({ filePath: req.file.path });
+  res.json(result);
 });
 
 app.listen(PORT, () => {
