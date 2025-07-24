@@ -1,0 +1,145 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f2f5;
+}
+
+.chatbot-container {
+  width: 700px;
+  max-width: 90vw;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #3b3b3b;
+}
+
+.chat-window {
+  background: #f6f8fa;
+  border-radius: 10px;
+  min-height: 400px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.chat-message {
+  padding: 0.75rem 1.25rem;
+  border-radius: 18px;
+  max-width: 85%;
+  word-break: break-word;
+  font-size: 1.08rem;
+  line-height: 1.5;
+}
+
+.chat-message.user {
+  align-self: flex-end;
+  background: #d1e7ff;
+  color: #1a3a5d;
+}
+
+.chat-message.bot {
+  align-self: flex-start;
+  background: #e9ecef;
+  color: #333;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  border-radius: 24px;
+  border: 1.5px solid #cfd8dc;
+  font-size: 1.08rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.chat-input:focus {
+  border: 2px solid #1976d2;
+}
+
+.send-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 0 2rem;
+  font-size: 1.08rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.send-btn:hover {
+  background: #125ea7;
+}
+
+.chat-link {
+  color: #1976d2;
+  text-decoration: underline;
+  word-break: break-all;
+  transition: color 0.2s;
+}
+
+.chat-link:hover {
+  color: #125ea7;
+  text-decoration: underline;
+}
+
+.chat-message table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  background: #f9fafb;
+}
+.chat-message th, .chat-message td {
+  border: 1px solid #d1d5db;
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+.chat-message th {
+  background: #e3e7ed;
+  font-weight: 600;
+}
+
+.chat-message ul, .chat-message ol {
+  margin: 0.5em 0 0.5em 1.5em;
+  padding: 0;
+}
+
+.chat-message code, .chat-message pre {
+  background: #f4f4f4;
+  color: #2d3748;
+  border-radius: 4px;
+  font-family: 'Fira Mono', 'Consolas', 'Monaco', monospace;
+  font-size: 0.98em;
+}
+
+.chat-message pre {
+  padding: 1em;
+  overflow-x: auto;
+  margin: 0.5em 0;
+}
+
+.chat-message code {
+  padding: 0.2em 0.4em;
+} 
