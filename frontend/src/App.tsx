@@ -88,6 +88,9 @@ function App() {
   const [listening, setListening] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [lastDebug, setLastDebug] = useState<{threadId?: string, runId?: string, assistantId?: string}>({});
+  const [isThinking, setIsThinking] = useState(false);
+  const [statusMessages, setStatusMessages] = useState<string[]>([]);
 
   // Scroll to bottom on new message
   const scrollToBottom = () => {
@@ -95,12 +98,27 @@ function App() {
   };
   useEffect(scrollToBottom, [messages]);
 
+  useEffect(() => {
+    let interval: NodeJS.Timeout | undefined;
+    if (isThinking && lastDebug.runId) {
+      interval = setInterval(async () => {
+        const res = await fetch(`http://localhost:3001/api/chat/status?runId=${lastDebug.runId}`);
+        const data = await res.json();
+        setStatusMessages(data.status || []);
+      }, 1000);
+    } else {
+      setStatusMessages([]);
+    }
+    return () => { if (interval) clearInterval(interval); };
+  }, [isThinking, lastDebug.runId]);
+
   const sendMessage = async (e: FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
     const userMessage: Message = { sender: 'user', text: input };
     setMessages((msgs) => [...msgs, userMessage, { sender: 'bot', text: 'Thinking...' }]);
     setInput('');
+    setIsThinking(true);
 
     try {
       const res = await fetch('http://localhost:3001/api/chat', {
@@ -110,6 +128,7 @@ function App() {
       });
       const data = await res.json();
       setThreadId(data.threadId);
+      setLastDebug({ threadId: data.threadId, runId: data.runId, assistantId: data.assistantId });
       setMessages((msgs) => [
         ...msgs.slice(0, -1),
         { sender: 'bot', text: data.reply || data.error || 'No response.' }
@@ -119,6 +138,8 @@ function App() {
         ...msgs.slice(0, -1),
         { sender: 'bot', text: 'Error contacting backend at http://localhost:3001.' }
       ]);
+    } finally {
+      setIsThinking(false);
     }
   };
 
@@ -190,18 +211,44 @@ function App() {
   return (
     <div className="chatbot-container">
       <h2>Onchain Agent Chatbot</h2>
+      {/* Show status messages (thinking process) above the input */}
+      {isThinking && statusMessages.length > 0 && (
+        <div style={{
+          background: '#23272f',
+          color: '#a259ff',
+          borderRadius: 12,
+          padding: '1rem 1.5rem',
+          margin: '0 0 1.5rem 0',
+          fontSize: 16,
+          fontFamily: 'monospace',
+          maxHeight: 180,
+          overflowY: 'auto',
+          boxShadow: '0 2px 12px 0 #a259ff20',
+        }}>
+          {statusMessages.map((msg, i) => (
+            <div key={i} style={{ marginBottom: 4 }}>{msg}</div>
+          ))}
+        </div>
+      )}
       <div className="chat-window">
         {messages.map((msg, idx) => (
-          <div key={idx} className={`chat-message ${msg.sender}`}>{
-            msg.sender === 'bot' ? (
-              <ReactMarkdown
-                components={{
-                  a: ({node, ...props}) => <a {...props} style={{ color: '#ffb300', textDecoration: 'underline', fontWeight: 600 }} target="_blank" rel="noopener noreferrer" />,
-                  li: ({node, ...props}) => <li style={{ marginBottom: 4 }} {...props} />
-                }}
-              >{msg.text}</ReactMarkdown>
-            ) : renderMessageWithLinks(msg.text)
-          }</div>
+          <div key={idx} className={`chat-message ${msg.sender}`}>
+            {msg.sender === 'bot' ? (
+              msg.text === 'Thinking...'
+                ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span className="spinner" />
+                    <span style={{ color: '#a259ff', fontWeight: 600, fontSize: 18 }}>Thinking...</span>
+                  </span>
+                )
+                : <ReactMarkdown
+                    components={{
+                      a: ({node, ...props}) => <a {...props} style={{ color: '#ffb300', textDecoration: 'underline', fontWeight: 600 }} target="_blank" rel="noopener noreferrer" />,
+                      li: ({node, ...props}) => <li style={{ marginBottom: 4 }} {...props} />
+                    }}
+                  >{msg.text}</ReactMarkdown>
+            ) : renderMessageWithLinks(msg.text)}
+          </div>
         ))}
         <div ref={messagesEndRef} />
       </div>

@@ -43,6 +43,9 @@ async function getAssistant() {
   return assistantPromise;
 }
 
+// In-memory status tracking for each run
+const runStatus: Record<string, string[]> = {};
+
 app.post('/api/chat', async (req, res) => {
   const { message, threadId } = req.body;
   if (!message) return res.status(400).json({ error: 'Missing message' });
@@ -61,7 +64,12 @@ app.post('/api/chat', async (req, res) => {
     });
     // Create and perform the run
     const run = await createRun(openaiClient, thread, assistant.id);
-    const result = await performRun(run, openaiClient, thread);
+    runStatus[run.id] = [];
+    runStatus[run.id].push(`🚀 Performing run ${run.id}`);
+    // Patch performRun to accept a status callback
+    const result = await performRun(run, openaiClient, thread, (statusMsg) => {
+      runStatus[run.id].push(statusMsg);
+    });
     let reply = '';
     if (result?.type === 'text') {
       reply = result.text.value;
@@ -70,10 +78,17 @@ app.post('/api/chat', async (req, res) => {
     } else {
       reply = 'No response.';
     }
-    res.json({ reply, threadId: thread.id });
+    runStatus[run.id].push(`🚀 Assistant message: ${reply}`);
+    res.json({ reply, threadId: thread.id, runId: run.id, assistantId: assistant.id });
   } catch (error) {
     res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
   }
+});
+
+// Status endpoint
+app.get('/api/chat/status', (req, res) => {
+  const { runId } = req.query;
+  res.json({ status: runStatus[runId as string] || [] });
 });
 
 app.post('/api/upload', upload.single('file'), async (req, res) => {
