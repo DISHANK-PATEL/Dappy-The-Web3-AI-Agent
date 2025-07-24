@@ -177,9 +177,24 @@ function App() {
           type="button"
           className="mic-btn"
           onClick={handleVoiceInput}
-          style={{ background: listening ? '#a259ff' : '#23272f', color: '#fff', border: 'none', borderRadius: '50%', width: 48, height: 48, marginRight: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.2s' }}
+          style={{
+            background: listening
+              ? 'linear-gradient(90deg, #ff4ecd 0%, #43e7fe 100%)'
+              : 'linear-gradient(90deg, #43e7fe 0%, #a259ff 100%)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '50%',
+            width: 60,
+            height: 60,
+            marginRight: 8,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'background 0.2s',
+            boxShadow: '0 2px 12px 0 #a259ff80',
+          }}
         >
-          <FaMicrophone size={22} />
+          <FaMicrophone size={32} color="#fff" />
         </button>
         <button type="submit" className="send-btn">Send</button>
       </form>
