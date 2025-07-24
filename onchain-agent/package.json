@@ -1,0 +1,30 @@
+{
+  "name": "dappy-the-web3-ai-agent",
+  "version": "1.0.0",
+  "description": "Dappy-The Web3 AI Agent: An AI-powered agent for podcast and blockchain data queries.",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/plantuml-encoder": "^1.4.2",
+    "dotenv": "^16.4.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "openai": "^4.104.0",
+    "readline": "^1.3.0",
+    "viem": "^2.21.52"
+  }
+}
