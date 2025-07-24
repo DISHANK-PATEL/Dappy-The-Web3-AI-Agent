@@ -11,6 +11,7 @@ import { approveTokenAllowanceTool } from './approveTokenAllowance.js';
 import { getTokenBalanceTool } from './getTokenBalance.js';
 import { fetchPodcastDetailsTool } from './fetchPodcastDetails.js';
 import { uploadToIpfsTool } from './uploadToIpfs.js';
+import { verifyStatementTool } from './verifyStatement.js';
 
 export interface ToolConfig<T = any> {
     definition: {
@@ -46,6 +47,7 @@ export const tools: Record<string, ToolConfig> = {
     approve_token_allowance: approveTokenAllowanceTool,
     fetch_podcast_details: fetchPodcastDetailsTool,
     upload_to_ipfs: uploadToIpfsTool,
+    verify_statement: verifyStatementTool,
     // generate_diagram: generateDiagramTool,
 
     // Add more tools here...
