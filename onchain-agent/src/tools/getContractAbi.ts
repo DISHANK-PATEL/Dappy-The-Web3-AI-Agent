@@ -36,8 +36,11 @@ export const getContractAbiTool: ToolConfig<GetContractAbiArgs> = {
 };
 
 async function getContractAbi(contract: Address, functionName?: string) {
-    const BLOCK_EXPLORER_API = 'https://block-explorer-api.testnet.abs.xyz';
-    const url = `${BLOCK_EXPLORER_API}/api?module=contract&action=getabi&address=${contract}`;
+    // Updated to Sepolia-compatible Etherscan endpoint
+    const BLOCK_EXPLORER_API = 'https://api-sepolia.etherscan.io';
+    // NOTE: You must provide your Etherscan API key here
+    const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || '<YOUR_ETHERSCAN_API_KEY>';
+    const url = `${BLOCK_EXPLORER_API}/api?module=contract&action=getabi&address=${contract}&apikey=${ETHERSCAN_API_KEY}`;
 
     try {
         const response = await fetch(url);

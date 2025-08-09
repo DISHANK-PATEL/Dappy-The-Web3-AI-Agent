@@ -45,6 +45,7 @@ h2 {
   color: #e5e7ef;
   width: 100%;
   box-sizing: border-box;
+  overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 .chat-message {
@@ -52,6 +53,8 @@ h2 {
   border-radius: 18px;
   max-width: 95%;
   word-break: break-word;
+  overflow-wrap: break-word; /* Ensure long words/links wrap */
+  white-space: normal; /* Allow normal wrapping */
   font-size: 1.18rem;
   line-height: 1.7;
   background: #23272f;
